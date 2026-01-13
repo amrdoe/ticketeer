@@ -1,0 +1,30 @@
+{
+    "css": {
+        "parser": {
+            "tailwindDirectives": true
+        }
+    },
+    "overrides": [
+        {
+            "include": ["**/*.vue"],
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noUnusedVariables": "off",
+                        "noUnusedImports": "off"
+                    },
+                    "style": {
+                        "useConst": "off"
+                    }
+                }
+            }
+        }
+    ],
+    "javascript": {
+        "vue": {
+            "html": {
+                "experimentalFullSupportEnabled": true
+            }
+        }
+    }
+}

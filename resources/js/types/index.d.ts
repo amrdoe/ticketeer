@@ -1,39 +1,68 @@
-import { InertiaLinkProps } from '@inertiajs/vue3';
-import type { LucideIcon } from 'lucide-vue-next';
+interface CartItem {
+    name: string;
+    code: string;
+    ticket_type_id: string;
+    unit_price: number;
+    quantity: number;
+    event_id: string;
+}
 
-export interface Auth {
+interface Event {
+    id: string;
+    title: string;
+    description: string;
+    start_date: string;
+    end_date: string;
+    sale_start: string;
+    sale_end: string;
+    location?: string;
+    image_url?: string;
+    ticket_types?: TicketType[];
     user: User;
 }
 
-export interface BreadcrumbItem {
-    title: string;
-    href: string;
+interface Order {
+    id: string;
+    order_number: string;
+    status: 'pending' | 'completed' | 'canceled';
+    items: OrderItem[];
+    total_amount: string;
+    created_at: string;
 }
 
-export interface NavItem {
-    title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon;
-    isActive?: boolean;
+interface OrderItem {
+    id: string;
+    ticketType: TicketType;
+    quantity: number;
+    subtotal: string;
 }
 
-export type AppPageProps<
-    T extends Record<string, unknown> = Record<string, unknown>,
-> = T & {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    sidebarOpen: boolean;
-};
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
+interface Ticket {
+    id: string;
+    unique_code: string;
+    status: 'active' | 'pending' | 'redeemed' | 'canceled' | 'expired';
+    order: Order;
+    ticket_type: TicketType;
+    redeemed_at?: string;
+    orderItem?: OrderItem;
     created_at: string;
     updated_at: string;
 }
 
-export type BreadcrumbItemType = BreadcrumbItem;
+interface TicketType {
+    id: string;
+    name: string;
+    code: string;
+    description?: string;
+    price: string;
+    available_quantity: number;
+    event_id: string;
+    event?: Event;
+}
+
+interface User {
+    id: string;
+    name: string;
+    email: string;
+    is_organizer: boolean;
+}
