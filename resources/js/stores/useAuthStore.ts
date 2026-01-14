@@ -13,6 +13,7 @@ export const useAuthStore = defineStore('auth', () => {
         email: string,
         password: string,
         passwordConfirmation: string,
+        isOrganizer = false,
     ) => {
         loading.value = true;
         error.value = '';
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
                 email,
                 password,
                 password_confirmation: passwordConfirmation,
+                is_organizer: isOrganizer,
             });
 
             token.value = response.token;

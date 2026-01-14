@@ -20,12 +20,14 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'is_organizer' => 'sometimes|boolean',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'is_organizer' => $request->boolean('is_organizer'),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;

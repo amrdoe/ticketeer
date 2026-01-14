@@ -13,6 +13,29 @@
                 </div>
 
                 <form @submit.prevent="handleRegister" class="space-y-4">
+                    <div class="flex gap-2">
+                        <button
+                            type="button"
+                            @click="isOrganizer = false"
+                            :class="[
+                                !isOrganizer ? 'btn-primary' : 'btn-secondary',
+                                'w-1/2',
+                            ]"
+                        >
+                            Buyer
+                        </button>
+                        <button
+                            type="button"
+                            @click="isOrganizer = true"
+                            :class="[
+                                isOrganizer ? 'btn-primary' : 'btn-secondary',
+                                'w-1/2',
+                            ]"
+                        >
+                            Organizer
+                        </button>
+                    </div>
+
                     <div>
                         <label
                             class="mb-2 block text-sm font-semibold text-gray-900"
@@ -101,6 +124,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/useAuthStore';
+import { api } from '../utils/api';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -111,6 +135,8 @@ const form = ref({
     password: '',
     passwordConfirmation: '',
 });
+
+const isOrganizer = ref(false);
 
 const loading = ref(false);
 const error = ref('');
@@ -125,12 +151,19 @@ const handleRegister = async () => {
     error.value = '';
 
     try {
-        await authStore.register(
-            form.value.name,
-            form.value.email,
-            form.value.password,
-            form.value.passwordConfirmation,
-        );
+        const response = await api.register({
+            name: form.value.name,
+            email: form.value.email,
+            password: form.value.password,
+            password_confirmation: form.value.passwordConfirmation,
+            is_organizer: isOrganizer.value,
+        });
+
+        // Mirror what the auth store does: save token & user
+        authStore.token = response.token;
+        authStore.user = response.user;
+        localStorage.setItem('auth_token', response.token);
+
         router.push('/');
     } catch (err) {
         error.value = (err as Error).message || 'Registration failed';
