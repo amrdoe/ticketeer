@@ -63,6 +63,15 @@
                     My Tickets
                 </router-link>
 
+                <!-- My Events (organizers only) -->
+                <router-link
+                    v-if="authStore.user?.is_organizer"
+                    to="/my-events"
+                    class="font-medium text-gray-600 transition hover:text-purple-500"
+                >
+                    My Events
+                </router-link>
+
                 <!-- User Menu -->
                 <div
                     v-if="authStore.user"
@@ -139,6 +148,15 @@
                                 @click="showUserDropdown = false"
                             >
                                 My Tickets
+                            </router-link>
+
+                            <router-link
+                                v-if="authStore.user?.is_organizer"
+                                to="/my-events"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                                @click="showUserDropdown = false"
+                            >
+                                My Events
                             </router-link>
                             <button
                                 @click="handleLogout"

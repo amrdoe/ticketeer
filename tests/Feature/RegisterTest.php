@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
 it('registers a buyer successfully', function () {
     $response = $this->postJson('/api/auth/register', [
         'name' => 'John Buyer',

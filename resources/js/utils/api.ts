@@ -77,6 +77,11 @@ export const api = {
         return this.request('GET', `/events/${id}`);
     },
 
+    // Events belonging to the authenticated user
+    getMyEvents(page = 1, token = '') {
+        return this.request('GET', `/user/events?page=${page}`, null, token);
+    },
+
     createEvent(data: any, token: string) {
         return this.request('POST', '/events', data, token);
     },

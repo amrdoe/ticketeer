@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TicketType;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
@@ -36,9 +36,9 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $order = new Order();
+        $order = new Order;
         $order->user_id = auth()->id();
-        $order->order_number = 'ORD-' . Str::upper(Str::random(10));
+        $order->order_number = 'ORD-'.Str::upper(Str::random(10));
         $order->total_amount = 0;
         $order->status = 'pending';
 

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -49,7 +49,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($validated)) {
+        if (! Auth::attempt($validated)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
@@ -90,7 +90,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => 'string|max:255',
-            'email' => 'email|unique:users,email,' . $user->id,
+            'email' => 'email|unique:users,email,'.$user->id,
         ]);
 
         $user->update($validated);

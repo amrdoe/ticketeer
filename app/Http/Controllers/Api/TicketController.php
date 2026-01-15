@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Ticket;
 use Symfony\Component\HttpFoundation\Response;
 
 class TicketController extends Controller
@@ -24,26 +24,19 @@ class TicketController extends Controller
     }
 
     /**
-
      * Scan a ticket by code (organizer only).
-
      */
     public function scan(Request $request, string $code): JsonResponse
-
     {
         $ticket = Ticket::with('ticketType.event.user')->where('unique_code', $code)->first();
 
-
-
-        if (!$ticket) {
+        if (! $ticket) {
 
             return response()->json(['message' => 'Ticket not found.'], Response::HTTP_NOT_FOUND);
 
         }
 
         $event = $ticket->ticketType->event;
-
-
 
         if ($request->user()->id !== $event->user_id) {
 
@@ -57,31 +50,25 @@ class TicketController extends Controller
 
             'event' => $event,
 
-            'redeemed' => !is_null($ticket->redeemed_at),
+            'redeemed' => ! is_null($ticket->redeemed_at),
 
         ]);
     }
 
     /**
      * Redeem a ticket by code (organizer only, confirmation required).
-
      */
     public function redeem(Request $request, string $code): JsonResponse
-
     {
         $ticket = Ticket::with('ticketType.event.user')->where('unique_code', $code)->first();
 
-
-
-        if (!$ticket) {
+        if (! $ticket) {
 
             return response()->json(['message' => 'Ticket not found.'], Response::HTTP_NOT_FOUND);
 
         }
 
         $event = $ticket->ticketType->event;
-
-
 
         if ($request->user()->id !== $event->user_id) {
 
@@ -97,7 +84,7 @@ class TicketController extends Controller
 
         // Confirm parameter required
 
-        if (!$request->boolean('confirm')) {
+        if (! $request->boolean('confirm')) {
 
             return response()->json([
 
@@ -113,8 +100,6 @@ class TicketController extends Controller
 
         $ticket->save();
 
-
-
         return response()->json([
 
             'message' => 'Ticket redeemed successfully.',
@@ -123,6 +108,4 @@ class TicketController extends Controller
 
         ]);
     }
-
-
 }

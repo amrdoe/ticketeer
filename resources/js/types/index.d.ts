@@ -1,4 +1,4 @@
-interface CartItem {
+export interface CartItem {
     name: string;
     code: string;
     ticket_type_id: string;
@@ -7,7 +7,7 @@ interface CartItem {
     event_id: string;
 }
 
-interface Event {
+export interface Event {
     id: string;
     title: string;
     description: string;
@@ -17,11 +17,33 @@ interface Event {
     sale_end: string;
     location?: string;
     image_url?: string;
-    ticket_types?: TicketType[];
+    ticketTypes?: TicketType[];
     user: User;
 }
 
-interface Order {
+export interface TicketTypeInput {
+    id?: string; // Optional for updates
+    __id?: string; // Frontend temp ID
+    name: string;
+    code: string;
+    price: number;
+    total_quantity: number;
+    description?: string | null;
+}
+
+export interface EventInput {
+    title?: string;
+    description?: string;
+    start_date?: string | null;
+    end_date?: string | null;
+    sale_start?: string | null;
+    sale_end?: string | null;
+    location?: string | null;
+    image_url?: string | null;
+    ticketTypes?: TicketTypeInput[];
+}
+
+export interface Order {
     id: string;
     order_number: string;
     status: 'pending' | 'completed' | 'canceled';
@@ -30,37 +52,38 @@ interface Order {
     created_at: string;
 }
 
-interface OrderItem {
+export interface OrderItem {
     id: string;
     ticketType: TicketType;
     quantity: number;
     subtotal: string;
 }
 
-interface Ticket {
+export interface Ticket {
     id: string;
     unique_code: string;
     status: 'active' | 'pending' | 'redeemed' | 'canceled' | 'expired';
     order: Order;
-    ticket_type: TicketType;
+    ticketType: TicketType;
     redeemed_at?: string;
     orderItem?: OrderItem;
     created_at: string;
     updated_at: string;
 }
 
-interface TicketType {
+export interface TicketType {
     id: string;
     name: string;
     code: string;
     description?: string;
-    price: string;
+    price: number; 
+    total_quantity: number;
     available_quantity: number;
     event_id: string;
     event?: Event;
 }
 
-interface User {
+export interface User {
     id: string;
     name: string;
     email: string;

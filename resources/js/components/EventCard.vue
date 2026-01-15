@@ -57,22 +57,23 @@
 </template>
 
 <script setup lang="ts">
+import type { Event, TicketType } from '@/types';
+import formatDate from '@/utils/formatDate';
 import { computed } from 'vue';
-import formatDate from '../utils/formatDate';
 
 const props = defineProps({
     event: {
-        type: Object,
+        type: Object as () => Event,
         required: true,
     },
 });
 
 const minPrice = computed(() => {
-    if (!props.event.ticketTypes || props.event.ticketTypes.length === 0) {
+    if (!props.event.ticketTypes?.length) {
         return '0.00';
     }
     const min = Math.min(
-        ...props.event.ticketTypes.map((t: TicketType) => parseFloat(t.price)),
+        ...props.event.ticketTypes.map((t: TicketType) => t.price),
     );
     return min.toFixed(2);
 });

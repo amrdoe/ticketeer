@@ -104,6 +104,7 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/useAuthStore';
+import type { Ticket } from '@/types';
 import { api } from '@/utils/api';
 import { onMounted, ref } from 'vue';
 

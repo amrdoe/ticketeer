@@ -85,10 +85,7 @@
                                         >
                                         <span class="text-gray-800"
                                             >${{
-                                                parseFloat(
-                                                    ticket.ticket_type?.price ??
-                                                        0,
-                                                ).toFixed(2)
+                                                (ticket.ticket_type?.price ?? 0).toFixed(2)
                                             }}</span
                                         >
                                     </div>
@@ -186,6 +183,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { api } from '@/utils/api';
 import QrcodeVue from 'qrcode.vue';
 import { computed, onMounted, ref } from 'vue';
+import type { Ticket } from '@/types';
 
 const authStore = useAuthStore();
 const tickets = ref<Ticket[]>([]);

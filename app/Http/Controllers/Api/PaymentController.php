@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
-
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
 
 class PaymentController extends Controller
 {
     use AuthorizesRequests;
+
     public function __construct()
     {
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -33,7 +33,7 @@ class PaymentController extends Controller
 
         try {
             $intent = PaymentIntent::create([
-                'amount' => (int)($order->total_amount * 100),
+                'amount' => (int) ($order->total_amount * 100),
                 'currency' => 'usd',
                 'metadata' => [
                     'order_id' => $order->id,
@@ -79,7 +79,7 @@ class PaymentController extends Controller
 
             $payment = Payment::where('stripe_payment_intent_id', $validated['payment_intent_id'])->first();
 
-            if (!$payment) {
+            if (! $payment) {
                 return response()->json(['message' => 'Payment record not found'], 404);
             }
 
@@ -114,7 +114,7 @@ class PaymentController extends Controller
 
         $payment = $order->payment()->first();
 
-        if (!$payment) {
+        if (! $payment) {
             return response()->json(['message' => 'Payment not found'], 404);
         }
 

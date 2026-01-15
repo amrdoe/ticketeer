@@ -1,10 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Cart from './pages/Cart.vue';
 import Checkout from './pages/Checkout.vue';
+import CreateEvent from './pages/CreateEvent.vue';
+import EditEvent from './pages/EditEvent.vue';
 import EventDetail from './pages/EventDetail.vue';
 import Events from './pages/Events.vue';
 import Home from './pages/Home.vue';
 import Login from './pages/Login.vue';
+import MyEvents from './pages/MyEvents.vue';
 import MyTickets from './pages/MyTickets.vue';
 import OrderConfirmation from './pages/OrderConfirmation.vue';
 import Register from './pages/Register.vue';
@@ -48,6 +51,25 @@ const routes = [
         name: 'MyTickets',
         component: MyTickets,
         meta: { requiresAuth: true },
+    },
+    {
+        path: '/my-events',
+        name: 'MyEvents',
+        component: MyEvents,
+        meta: { requiresAuth: true, organizerOnly: true },
+    },
+    {
+        path: '/events/create',
+        name: 'CreateEvent',
+        component: CreateEvent,
+        meta: { requiresAuth: true, organizerOnly: true },
+    },
+    {
+        path: '/events/:id/edit',
+        name: 'EditEvent',
+        component: EditEvent,
+        meta: { requiresAuth: true, organizerOnly: true },
+        props: true,
     },
     {
         path: '/login',

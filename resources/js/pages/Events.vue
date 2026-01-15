@@ -62,9 +62,10 @@
 </template>
 
 <script setup lang="ts">
+import EventCard from '@/components/EventCard.vue';
+import type { Event } from '@/types';
+import { api } from '@/utils/api';
 import { onMounted, ref, watch } from 'vue';
-import EventCard from '../components/EventCard.vue';
-import { api } from '../utils/api';
 
 const events = ref<Event[]>([]);
 const loading = ref(false);

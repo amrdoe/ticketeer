@@ -67,7 +67,7 @@
                                 class="flex justify-between"
                             >
                                 <span class="text-gray-700"
-                                    >{{ item.ticket_type.name }} x
+                                    >{{ item.ticketType.name }} x
                                     {{ item.quantity }}</span
                                 >
                                 <span class="font-semibold text-gray-900"
@@ -97,6 +97,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../stores/useAuthStore';
+import type { Order } from '@/types';
 import { api } from '../utils/api';
 
 import formatDate from '../utils/formatDate';

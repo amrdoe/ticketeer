@@ -38,6 +38,7 @@ class OrderItem extends Model
     {
         return $this->belongsTo(TicketType::class);
     }
+
     /**
      * Get the tickets for this order item.
      *

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import type { CartItem, TicketType } from '@/types';
 import { api } from '../utils/api';
 
 export const useCartStore = defineStore('cart', () => {
@@ -32,7 +33,7 @@ export const useCartStore = defineStore('cart', () => {
                 ticket_type_id: ticketType.id,
                 name: ticketType.name,
                 code: ticketType.code,
-                unit_price: parseFloat(ticketType.price),
+                unit_price: ticketType.price,
                 quantity: 1,
                 event_id: ticketType.event_id,
             });

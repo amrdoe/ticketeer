@@ -22,7 +22,7 @@ test('api login returns token and user on valid credentials', function () {
     $token = $response->json('token');
     expect($token)->not->toBeEmpty();
 
-    $meResponse = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+    $meResponse = $this->withHeaders(['Authorization' => 'Bearer '.$token])
         ->getJson('/api/auth/me');
 
     $meResponse->assertOk()->assertJsonFragment([

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -37,26 +38,72 @@ class EventController extends Controller
     }
 
     /**
+     * Display events created by the authenticated user.
+     */
+    public function mine(Request $request): JsonResponse
+    {
+        $events = $request->user()->events()
+            ->with('ticketTypes', 'user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        return response()->json($events);
+    }
+
+    /**
      * Store a newly created resource in storage.
+     *
+     * Note: An event must have at least one ticket type at creation.
+     * Ticket types are created atomically with the event.
      */
     public function store(Request $request): JsonResponse
     {
+        $this->authorize('create', Event::class);
+
+        // Only organizers can create events — double-check at controller level.
+        if (! $request->user()?->is_organizer) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'organizer' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
             'sale_start' => 'required|date',
             'sale_end' => 'required|date|after:sale_start',
             'location' => 'nullable|string|max:255',
             'image_url' => 'nullable|url',
+            // Ticket types are required when creating an event
+            'ticket_types' => 'required|array|min:1',
+            'ticket_types.*.name' => 'required|string|max:255',
+            'ticket_types.*.code' => 'required|string|distinct|unique:ticket_types,code',
+            'ticket_types.*.price' => 'required|numeric|min:0',
+            'ticket_types.*.total_quantity' => 'required|integer|min:1',
+            'ticket_types.*.description' => 'nullable|string',
         ]);
 
-        $event = Event::create([
-            ...$validated,
-            'user_id' => auth()->id(),
-        ]);
+        // Create event and ticket types atomically
+        $event = DB::transaction(function () use ($validated) {
+            $event = Event::create([
+                ...$validated,
+                'user_id' => auth()->id(),
+            ]);
+
+            foreach ($validated['ticket_types'] as $tt) {
+                $event->ticketTypes()->create([
+                    'name' => $tt['name'],
+                    'code' => $tt['code'],
+                    'price' => $tt['price'],
+                    'total_quantity' => $tt['total_quantity'],
+                    // initial available equals total
+                    'available_quantity' => $tt['total_quantity'],
+                    'description' => $tt['description'] ?? null,
+                ]);
+            }
+
+            return $event->load('ticketTypes');
+        });
 
         return response()->json($event, 201);
     }
@@ -67,6 +114,7 @@ class EventController extends Controller
     public function show(Event $event): JsonResponse
     {
         $event->load('ticketTypes', 'user');
+
         return response()->json($event);
     }
 
@@ -80,7 +128,6 @@ class EventController extends Controller
         $validated = $request->validate([
             'title' => 'string|max:255',
             'description' => 'string',
-            'organizer' => 'string|max:255',
             'start_date' => 'date',
             'end_date' => 'date|after:start_date',
             'sale_start' => 'date',

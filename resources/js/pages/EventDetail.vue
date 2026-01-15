@@ -111,9 +111,7 @@
                                         <span
                                             class="text-lg font-bold text-purple-600"
                                             >${{
-                                                parseFloat(
-                                                    ticket.price,
-                                                ).toFixed(2)
+                                                ticket.price.toFixed(2)
                                             }}</span
                                         >
                                     </div>
@@ -186,6 +184,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCartStore } from '../stores/useCartStore';
+import type { Event, TicketType } from '@/types';
 import { api } from '../utils/api';
 import formatDate from '../utils/formatDate';
 

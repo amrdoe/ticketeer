@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Event;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class EventPolicy
 {
@@ -29,7 +28,7 @@ class EventPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return (bool) $user->is_organizer;
     }
 
     /**

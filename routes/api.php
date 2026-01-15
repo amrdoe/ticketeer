@@ -1,14 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\TicketTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\TicketTypeController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\CartController;
-use App\Http\Controllers\Api\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
     Route::delete('/events/{event}', [EventController::class, 'destroy']);
+
+    // Events belonging to the authenticated user
+    Route::get('/user/events', [EventController::class, 'mine']);
 
     // Ticket Types
     Route::post('/events/{event}/tickets', [TicketTypeController::class, 'store']);

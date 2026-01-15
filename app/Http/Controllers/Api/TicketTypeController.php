@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\TicketType;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TicketTypeController extends Controller
 {
@@ -16,6 +16,7 @@ class TicketTypeController extends Controller
     public function index(Event $event): JsonResponse
     {
         $ticketTypes = $event->ticketTypes;
+
         return response()->json($ticketTypes);
     }
 
@@ -64,6 +65,20 @@ class TicketTypeController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        // If total_quantity is being updated, ensure it is not less than the number of tickets already sold.
+        if (array_key_exists('total_quantity', $validated)) {
+            $currentTotal = $ticketType->total_quantity;
+            $currentAvailable = $ticketType->available_quantity;
+            $sold = $currentTotal - $currentAvailable;
+
+            if ($validated['total_quantity'] < $sold) {
+                return response()->json(['message' => 'Total quantity cannot be less than already sold tickets'], 422);
+            }
+
+            // Recalculate available quantity so that sold tickets remain unchanged.
+            $validated['available_quantity'] = $validated['total_quantity'] - $sold;
+        }
+
         $ticketType->update($validated);
 
         return response()->json($ticketType);
@@ -75,6 +90,19 @@ class TicketTypeController extends Controller
     public function destroy(TicketType $ticketType): JsonResponse
     {
         $this->authorize('delete', $ticketType->event);
+
+        // Prevent deletion if tickets have been sold for this ticket type.
+        $sold = $ticketType->total_quantity - $ticketType->available_quantity;
+        if ($sold > 0) {
+            return response()->json([
+                'message' => 'Cannot delete ticket type with sold tickets. Consider marking it sold out instead.',
+            ], 422);
+        }
+
+        // Ensure event always has at least one ticket type.
+        if ($ticketType->event->ticketTypes()->count() <= 1) {
+            return response()->json(['message' => 'An event must have at least one ticket type'], 422);
+        }
 
         $ticketType->delete();
 

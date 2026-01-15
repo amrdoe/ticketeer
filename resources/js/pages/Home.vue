@@ -60,11 +60,12 @@
 </template>
 
 <script setup lang="ts">
+import EventCard from '@/components/EventCard.vue';
+import type { Event } from '@/types';
+import { api } from '@/utils/api';
 import { onMounted, ref } from 'vue';
-import EventCard from '../components/EventCard.vue';
-import { api } from '../utils/api';
 
-const events = ref([]);
+const events = ref<Event[]>([]);
 const loading = ref(false);
 
 onMounted(async () => {

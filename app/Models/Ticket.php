@@ -16,6 +16,7 @@ class Ticket extends Model
         'unique_code',
         'redeemed_at',
     ];
+
     /**
      * Get the order item that owns the ticket.
      *
@@ -25,6 +26,7 @@ class Ticket extends Model
     {
         return $this->belongsTo(OrderItem::class);
     }
+
     /**
      * Get the ticket type for the ticket.
      *

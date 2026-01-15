@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\TicketType;
-use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,10 +21,11 @@ class TicketTypeFactory extends Factory
             ['BS', 'Balcony Seat'],
             ['BA', 'Backstage Access'],
         ]);
+
         return [
             'event_id' => \App\Models\Event::factory(),
             'name' => $name,
-            'code' => $prefix . '-' . fake()->unique()->regexify("[A-Z]{4}"),
+            'code' => $prefix.'-'.fake()->unique()->regexify('[A-Z]{4}'),
             'price' => fake()->randomFloat(2, 10, 250),
             'total_quantity' => fake()->numberBetween(50, 500),
             'available_quantity' => function (array $attributes) {

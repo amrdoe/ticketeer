@@ -38,7 +38,7 @@ class EventFactory extends Factory
                 'Book Fair',
                 'Film Screening',
                 'Workshop Series',
-            ]) . ' ' . date('Y'),
+            ]).' '.date('Y'),
             'description' => $this->faker->paragraph(),
             'start_date' => $startDate,
             'end_date' => $endDate,

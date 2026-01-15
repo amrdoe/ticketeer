@@ -22,7 +22,7 @@ class Payment extends Model
         'amount' => 'decimal:2',
         'stripe_response' => 'array',
     ];
-    
+
     /**
      * @return BelongsTo<Order,Payment>
      */
