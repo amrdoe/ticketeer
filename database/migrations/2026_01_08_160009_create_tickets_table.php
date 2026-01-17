@@ -10,7 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::createIfNotExist('tickets', function (Blueprint $table) {
+        if (Schema::hasTable('tickets'))
+            return;
+
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_item_id')->constrained('order_items')->onDelete('cascade');
             $table->foreignId('ticket_type_id')->constrained('ticket_types')->onDelete('cascade');
