@@ -201,21 +201,21 @@
                     >
                         Edit
                     </button>
-                    <!-- Only show 'Mark Sold Out' if we have a persisted ID and eventId (meaning we are editing a live event) -->
+                    <!-- Show 'Mark Sold Out' only if sales exist AND not already sold out -->
+                    <!-- Show 'Delete' only if NO sales exist -->
                     <button
-                        v-if="eventId && tt.id"
+                        v-if="eventId && tt.id && (Number(tt.total_quantity) > Number(tt.available_quantity))"
                         type="button"
-                        class="btn-secondary text-sm"
+                        class="btn-danger text-sm"
                         @click="markSoldOut(tt)"
-                        :disabled="
-                            tt.total_quantity - tt.available_quantity === 0
-                        "
+                        :disabled="tt.total_quantity - tt.available_quantity === 0"
                     >
                         Mark Sold Out
                     </button>
                     <button
+                        v-else
                         type="button"
-                        class="btn-secondary text-sm"
+                        class="btn-danger text-sm"
                         @click="remove(tt)"
                         :disabled="deletingId === (tt.id || tt.__id)"
                     >
@@ -488,6 +488,11 @@ onMounted(async () => {
     } else {
         // Local mode initialization
         ticketTypes.value.forEach((t) => setItemEditState(t));
+        
+        // If empty in local mode, start creating immediately for better UX
+        if (ticketTypes.value.length === 0) {
+            startCreating();
+        }
     }
 });
 

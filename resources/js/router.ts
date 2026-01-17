@@ -72,6 +72,13 @@ const routes = [
         props: true,
     },
     {
+        path: '/events/:id/edit/ticket-types',
+        name: 'EditTicketTypes',
+        component: () => import('./pages/EditTicketTypes.vue'),
+        meta: { requiresAuth: true, organizerOnly: true },
+        props: true,
+    },
+    {
         path: '/login',
         name: 'Login',
         component: Login,

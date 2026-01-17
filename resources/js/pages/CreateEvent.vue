@@ -33,6 +33,7 @@
                     submitText="Create Event"
                     @submit="handleCreate"
                     @cancel="goBack"
+                    :wizard="true"
                 />
 
                 <div v-if="error" class="mt-4 text-sm text-red-600">

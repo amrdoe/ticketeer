@@ -2,9 +2,11 @@
     <div class="min-h-screen py-12">
         <div class="mx-auto max-w-3xl px-4">
             <div class="mb-8 flex items-center justify-between">
-                <h1 class="text-3xl font-bold text-gray-900">Edit Event</h1>
-                <router-link to="/my-events" class="btn-secondary"
-                    >Back</router-link
+                <h1 class="text-3xl font-bold text-gray-900">
+                    Edit Ticket Types
+                </h1>
+                <router-link :to="`/events/${id}/edit`" class="btn-secondary"
+                    >Back to Event</router-link
                 >
             </div>
 
@@ -35,30 +37,17 @@
                 </div>
 
                 <div v-else class="rounded-lg bg-white p-6 shadow">
-                    <EventForm
-                        v-if="event"
-                        :initialEvent="event"
-                        :loading="saving"
-                        submitText="Save Changes"
-                        :manageTicketTypes="false"
-                        @submit="handleUpdate"
-                        @cancel="goBack"
-                    />
-
-                    <div class="mt-6 border-t border-gray-200 pt-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-medium text-gray-900">Ticket Types</h3>
-                                <p class="mt-1 text-sm text-gray-500">Manage ticket types, prices, and quantities.</p>
-                            </div>
-                            <router-link
-                                :to="`/events/${id}/edit/ticket-types`"
-                                class="btn-primary"
-                            >
-                                Manage Ticket Types
-                            </router-link>
-                        </div>
+                    <div class="mb-6">
+                         <p class="text-gray-600">
+                            Manage ticket types for <span class="font-semibold">{{ event?.title }}</span>.
+                        </p>
                     </div>
+
+                    <TicketTypesEditor
+                        v-if="event"
+                        :eventId="id"
+                        :initialTicketTypes="event.ticket_types ?? []"
+                    />
                 </div>
             </div>
         </div>
@@ -68,7 +57,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import EventForm from '../components/EventForm.vue';
+import TicketTypesEditor from '../components/TicketTypesEditor.vue';
 import { useAuthStore } from '../stores/useAuthStore';
 import { api } from '../utils/api';
 
@@ -80,7 +69,6 @@ const id = String(route.params.id ?? '');
 
 const event = ref<any | null>(null);
 const loading = ref<boolean>(true);
-const saving = ref<boolean>(false);
 const error = ref<string>('');
 
 async function fetchEvent() {
@@ -93,13 +81,11 @@ async function fetchEvent() {
     error.value = '';
 
     try {
-        // Ensure we have the latest user/token
         await authStore.getUser();
-
         const response = await api.getEvent(id);
         event.value = response;
 
-        // Check ownership: only owner should be able to edit
+        // Check ownership
         const user = authStore.user;
         const ownerId =
             event.value?.user?.id ??
@@ -108,13 +94,11 @@ async function fetchEvent() {
             null;
 
         if (!user || Number(ownerId) !== Number(user.id)) {
-            // Not authorized to edit this event
             router.push('/my-events');
             return;
         }
     } catch (err: unknown) {
         console.error('Error loading event:', err);
-        // Redirect back to list for not found / other errors
         router.push('/my-events');
     } finally {
         loading.value = false;
@@ -122,30 +106,4 @@ async function fetchEvent() {
 }
 
 onMounted(fetchEvent);
-
-function goBack() {
-    router.push('/my-events');
-}
-
-async function handleUpdate(payload: any) {
-    saving.value = true;
-    error.value = '';
-
-    try {
-        await authStore.getUser();
-        await api.updateEvent(id, payload, authStore.token);
-        router.push('/my-events');
-    } catch (err: unknown) {
-        console.error('Error updating event:', err);
-        if (err instanceof Error) {
-            error.value = err.message;
-        } else {
-            error.value = String(err);
-        }
-    } finally {
-        saving.value = false;
-    }
-}
 </script>
-
-<style scoped></style>

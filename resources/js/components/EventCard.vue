@@ -44,7 +44,7 @@
 
             <!-- Price -->
             <div
-                v-if="event.ticketTypes && event.ticketTypes.length > 0"
+                v-if="event.ticket_types && event.ticket_types.length > 0"
                 class="flex items-center justify-between"
             >
                 <span class="text-sm text-gray-600">Starting from</span>
@@ -69,11 +69,11 @@ const props = defineProps({
 });
 
 const minPrice = computed(() => {
-    if (!props.event.ticketTypes?.length) {
+    if (!props.event.ticket_types?.length) {
         return '0.00';
     }
     const min = Math.min(
-        ...props.event.ticketTypes.map((t: TicketType) => t.price),
+        ...props.event.ticket_types.map((t: TicketType) => t.price),
     );
     return min.toFixed(2);
 });

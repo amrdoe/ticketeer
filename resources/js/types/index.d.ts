@@ -17,7 +17,7 @@ export interface Event {
     sale_end: string;
     location?: string;
     image_url?: string;
-    ticketTypes?: TicketType[];
+    ticket_types?: TicketType[];
     user: User;
 }
 
@@ -40,7 +40,7 @@ export interface EventInput {
     sale_end?: string | null;
     location?: string | null;
     image_url?: string | null;
-    ticketTypes?: TicketTypeInput[];
+    ticket_types?: TicketTypeInput[];
 }
 
 export interface Order {
