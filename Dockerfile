@@ -3,32 +3,31 @@ FROM bitnami/laravel:latest
 # Set working directory
 WORKDIR /app
 
-# Switch to root to install extensions and modify config
+# Switch to root
 USER root
 
-# 1. Install PostgreSQL system libraries (Required for the PHP extension to work)
-RUN apt-get update && apt-get install -y libpq-dev
+# 1. Use 'install_packages' instead of apt-get
+# This installs the PostgreSQL system library required for the driver
+RUN install_packages libpq-dev
 
-# 2. Enable the PostgreSQL PHP extensions in php.ini
-# Bitnami ships with these extensions but comments them out by default.
-# We use 'sed' to find the lines starting with ';extension=...' and remove the semicolon.
+# 2. Enable the PostgreSQL PHP extensions
 RUN sed -i 's/;extension=pdo_pgsql/extension=pdo_pgsql/' /opt/bitnami/php/etc/php.ini && \
     sed -i 's/;extension=pgsql/extension=pgsql/' /opt/bitnami/php/etc/php.ini
 
-# Copy composer files first
+# Copy composer files
 COPY composer.json composer.lock ./
 
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Copy the rest of the application code
+# Copy application files
 COPY . .
 
-# Fix permissions for the non-root user
+# Fix permissions
 RUN chown -R 1001:1001 /app
 
-# Switch back to the non-root user
+# Switch back to non-root user
 USER 1001
 
-# Run the entrypoint script
+# Entrypoint
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
