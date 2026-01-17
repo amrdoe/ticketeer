@@ -3,14 +3,15 @@ FROM bitnami/laravel:latest
 # Set working directory
 WORKDIR /app
 
-# Switch to root
+# Switch to root to install system dependencies
 USER root
 
-# 1. Use 'install_packages' instead of apt-get
-# This installs the PostgreSQL system library required for the driver
-RUN install_packages libpq-dev
+# 1. Install PostgreSQL client libraries (Photon OS version)
+# 'libpq-dev' is for Debian; 'postgresql-libs' is for Photon/RPM
+RUN install_packages postgresql-libs
 
-# 2. Enable the PostgreSQL PHP extensions
+# 2. Enable the PostgreSQL PHP extensions in php.ini
+# We uncomment the lines for pdo_pgsql and pgsql
 RUN sed -i 's/;extension=pdo_pgsql/extension=pdo_pgsql/' /opt/bitnami/php/etc/php.ini && \
     sed -i 's/;extension=pgsql/extension=pgsql/' /opt/bitnami/php/etc/php.ini
 
@@ -20,14 +21,14 @@ COPY composer.json composer.lock ./
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Copy application files
+# Copy the rest of the application code
 COPY . .
 
-# Fix permissions
+# Fix permissions for the non-root user '1001'
 RUN chown -R 1001:1001 /app
 
-# Switch back to non-root user
+# Switch back to the non-root user
 USER 1001
 
-# Entrypoint
+# Run the entrypoint script
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
