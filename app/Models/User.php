@@ -25,6 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_organizer',
     ];
 
     /**
@@ -74,7 +75,9 @@ class User extends Authenticatable
      */
     public function tickets(): Builder
     {
-        return Ticket::query()->whereHas('orderItem', fn ($q) => $q->whereHas('order', fn ($q2) => $q2->where('user_id', $this->id))
+        return Ticket::query()->whereHas(
+            'orderItem',
+            fn($q) => $q->whereHas('order', fn($q2) => $q2->where('user_id', $this->id))
         );
     }
 }
