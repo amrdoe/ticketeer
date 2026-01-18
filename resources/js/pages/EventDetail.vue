@@ -111,7 +111,7 @@
                                         <span
                                             class="text-lg font-bold text-purple-600"
                                             >${{
-                                                ticket.price.toFixed(2)
+                                                Number(ticket.price).toFixed(2)
                                             }}</span
                                         >
                                     </div>

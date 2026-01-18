@@ -21,7 +21,14 @@
                 {{ formatDate(event.start_date) }}
             </div>
         </div>
-        <div v-else class="gradient-primary h-48"></div>
+        <div v-else class="gradient-primary relative h-48">
+            <!-- Date Pill -->
+            <div
+                class="absolute bottom-3 left-3 flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-purple-500 shadow-md"
+            >
+                {{ formatDate(event.start_date) }}
+            </div>
+        </div>
 
         <!-- Content -->
         <div class="p-4">
@@ -73,7 +80,7 @@ const minPrice = computed(() => {
         return '0.00';
     }
     const min = Math.min(
-        ...props.event.ticket_types.map((t: TicketType) => t.price),
+        ...props.event.ticket_types.map((t: TicketType) => Number(t.price)),
     );
     return min.toFixed(2);
 });
