@@ -32,35 +32,40 @@ RUN apt-get update && apt-get install -y \
 # 2. Install PHP extensions for Postgres
 RUN docker-php-ext-install pdo pdo_pgsql
 
-# 3. Configure Apache DocumentRoot
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
-
-# 4. Allow .htaccess to override config (Critical for Laravel routing)
-# This replaces "AllowOverride None" with "AllowOverride All" so Laravel's .htaccess works
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
-
-# 5. Enable mod_rewrite
+# 3. Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# 6. Get Composer
+# 4. Configure Apache (The Robust Way)
+# Instead of using 'sed' to edit files, we write a fresh config file.
+# This sets the DocumentRoot to /public AND enables .htaccess overrides.
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        Options Indexes FollowSymLinks\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+# 5. Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 7. Copy Application Code (PHP files)
+# 6. Copy Application Code
 COPY . .
 
-# 8. Copy Compiled Frontend Assets from Stage 1
-# This puts the css/js files exactly where Laravel expects them
+# 7. Copy Compiled Frontend Assets from Stage 1
+# (Ensure 'frontend' matches the name in Stage 1: FROM node:20 as frontend)
 COPY --from=frontend /app/public/build /var/www/html/public/build
 
-# 9. Install Backend Dependencies
+# 8. Install Backend Dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# 10. Fix Permissions
+# 9. Fix Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 11. Entrypoint
+# 10. Entrypoint
 ENTRYPOINT ["/var/www/html/docker-entrypoint.sh"]
