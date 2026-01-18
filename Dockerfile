@@ -1,7 +1,7 @@
 # ==========================================
 # STAGE 1: Frontend Build (Node.js)
 # ==========================================
-FROM node:20 as frontend
+FROM node:20 AS frontend
 
 WORKDIR /app
 
