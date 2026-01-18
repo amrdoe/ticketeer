@@ -37,26 +37,30 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
-# 4. Enable mod_rewrite
+# 4. Allow .htaccess to override config (Critical for Laravel routing)
+# This replaces "AllowOverride None" with "AllowOverride All" so Laravel's .htaccess works
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
+# 5. Enable mod_rewrite
 RUN a2enmod rewrite
 
-# 5. Get Composer
+# 6. Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 6. Copy Application Code (PHP files)
+# 7. Copy Application Code (PHP files)
 COPY . .
 
-# 7. Copy Compiled Frontend Assets from Stage 1
+# 8. Copy Compiled Frontend Assets from Stage 1
 # This puts the css/js files exactly where Laravel expects them
 COPY --from=frontend /app/public/build /var/www/html/public/build
 
-# 8. Install Backend Dependencies
+# 9. Install Backend Dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# 9. Fix Permissions
+# 10. Fix Permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 10. Entrypoint
+# 11. Entrypoint
 ENTRYPOINT ["/var/www/html/docker-entrypoint.sh"]
