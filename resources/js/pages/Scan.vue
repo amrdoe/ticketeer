@@ -16,7 +16,7 @@
                 <div class="text-lg font-semibold">
                     Event:
                     <span class="font-normal">{{
-                        ticket?.orderItem?.ticketType?.event?.title
+                        ticket?.orderItem?.ticket_type?.event?.title
                     }}</span>
                 </div>
                 <div class="text-lg font-semibold">
@@ -40,7 +40,7 @@
                 <div class="text-lg font-semibold">
                     Ticket Type:
                     <span class="font-normal">{{
-                        ticket?.orderItem?.ticketType?.name
+                        ticket?.orderItem?.ticket_type?.name
                     }}</span>
                 </div>
             </div>

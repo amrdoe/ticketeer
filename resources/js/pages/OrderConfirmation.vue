@@ -67,7 +67,7 @@
                                 class="flex justify-between"
                             >
                                 <span class="text-gray-700"
-                                    >{{ item.ticketType.name }} x
+                                    >{{ item.ticket_type.name }} x
                                     {{ item.quantity }}</span
                                 >
                                 <span class="font-semibold text-gray-900"

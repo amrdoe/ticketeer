@@ -85,7 +85,7 @@
                                         >
                                         <span class="text-gray-800"
                                             >${{
-                                                (ticket.ticket_type?.price ?? 0).toFixed(2)
+                                                Number(ticket.ticket_type?.price ?? 0).toFixed(2)
                                             }}</span
                                         >
                                     </div>

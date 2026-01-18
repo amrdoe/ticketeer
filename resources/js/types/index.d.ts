@@ -54,7 +54,7 @@ export interface Order {
 
 export interface OrderItem {
     id: string;
-    ticketType: TicketType;
+    ticket_type: TicketType;
     quantity: number;
     subtotal: string;
 }
@@ -64,7 +64,7 @@ export interface Ticket {
     unique_code: string;
     status: 'active' | 'pending' | 'redeemed' | 'canceled' | 'expired';
     order: Order;
-    ticketType: TicketType;
+    ticket_type: TicketType;
     redeemed_at?: string;
     orderItem?: OrderItem;
     created_at: string;
