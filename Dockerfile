@@ -6,7 +6,7 @@ FROM node:20 as frontend
 WORKDIR /app
 
 # Copy package files first to cache npm install
-COPY package*.json vite.config.js ./
+COPY package*.json vite.config.ts ./
 
 # Install npm dependencies
 RUN npm install
